@@ -1,6 +1,7 @@
-import React from "react";
+import { useContext } from "react";
 import Botao from "@/components/Botao";
 import { formatadorMoeda } from "@/utils/formatadorMoeda";
+import { CarrinhoContext } from "@/context/CarrinhoContext";
 
 const Produto = ({
   src,
@@ -9,8 +10,8 @@ const Produto = ({
   titulo,
   descricao,
   preco,
-  adicionarProduto,
 }) => {
+  const { adicionarProduto } = useContext(CarrinhoContext);
   return (
     <div className="col-12 col-md-6 col-xxl-4 pb-4">
       <div className="card">
@@ -19,7 +20,6 @@ const Produto = ({
           <h5 className="card-title fw-bold">{titulo}</h5>
           <p className="card-text">{descricao}</p>
           <p className="fw-bold">{formatadorMoeda(preco)}</p>
-
           <Botao
             variant="primary"
             type="button"
