@@ -1,50 +1,42 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useMemo, useReducer, useState } from "react";
+import { carrinhoReducer } from "@/reducers/carrinhoReducer";
 
 export const CarrinhoContext = createContext();
+CarrinhoContext.displayName = "Carrinho";
+
+const estadoInicial = [];
 
 export const CarrinhoProvider = ({ children }) => {
 
-  const [carrinho, setCarrinho] = useState([]);
+  const [carrinho, dispatch] = useReducer(carrinhoReducer, estadoInicial);
+  const [quantidade, setQuantidade] = useState(0);
+  const [valorTotal, setValorTotal] = useState(0);
 
-  function adicionarProduto(novoProduto) {
-    const produtoExisteNoCarrinho = carrinho.some(itemDoCarrinho => itemDoCarrinho.id === novoProduto.id);
-    if (!produtoExisteNoCarrinho) {
-      novoProduto.quantidade = 1;
-      setCarrinho((carrinhoAnterior) => [...carrinhoAnterior, novoProduto]);
-      return;
-    };
-    setCarrinho((carrinhoAnterior) =>
-      carrinhoAnterior.map((itemDoCarrinho) => {
-        if (itemDoCarrinho.id === novoProduto.id) itemDoCarrinho.quantidade++;
-        return itemDoCarrinho;
-      }));
-  };
+  const { totalTemp, quantidadeTemp } = useMemo(() => {
+    return carrinho.reduce((acumulador, produto) => ({
+      quantidadeTemp: acumulador.quantidadeTemp + produto.quantidade,
+      totalTemp: acumulador.totalTemp + produto.preco * produto.quantidade
+    }),
+      {
+        quantidadeTemp: 0,
+        totalTemp: 0,
+      }
+    );
+  }, [carrinho]);
 
-  function removerUmProduto(id) {
-    setCarrinho((carrinhoAnterior) => {
-      const produtoExistente = carrinhoAnterior.find(produto => produto.id === id);
-      if (!produtoExistente) return carrinhoAnterior;
-      if (produtoExistente.quantidade === 1) {
-        return carrinhoAnterior.filter(produto => produto.id != id);
-      } else {
-        return carrinhoAnterior.map(produto => {
-          if (produto.id === id) {
-            return { ...produto, quantidade: produto.quantidade - 1 }
-          };
-          return produto;
-        });
-      };
-    });
-  };
-
-  function removerDoCarrinho(id) {
-    setCarrinho((carrinhoAnterior => {
-      return carrinhoAnterior.filter(produto => produto.id != id);
-    }));
-  };
+  useEffect(() => {
+    setQuantidade(quantidadeTemp);
+    setValorTotal(totalTemp);
+  });
 
   return (
-    <CarrinhoContext.Provider value={{ carrinho, setCarrinho, adicionarProduto, removerUmProduto, removerDoCarrinho }}>
+    <CarrinhoContext.Provider
+    value={{
+      carrinho,
+      dispatch,
+      quantidade,
+      valorTotal,
+    }}>
       {children}
     </CarrinhoContext.Provider>
   );

@@ -1,12 +1,11 @@
-import React, { useContext } from "react";
 import Botao from "@/components/Botao";
 import Titulo from "@/components/Titulo";
 import { useLocation } from "react-router-dom";
-import { CarrinhoContext } from "@/context/CarrinhoContext";
+import { useCarrinhoContext } from "@/hooks/useCarrinhoContext";
 
 const Quantidade = ({ itemCarrinho }) => {
   const location = useLocation();
-  const { adicionarProduto, removerUmProduto } = useContext(CarrinhoContext);
+  const { adicionarProduto, removerProduto } = useCarrinhoContext();
   return (
     <div
       className={`d-flex flex-column align-items-center ${
@@ -22,7 +21,7 @@ const Quantidade = ({ itemCarrinho }) => {
         <Botao
           variant="removeItem"
           aria-label="Remover item"
-          handleClick={() => removerUmProduto(itemCarrinho.id)}
+          handleClick={() => removerProduto(itemCarrinho.id)}
         >
           -
         </Botao>

@@ -1,7 +1,6 @@
-import { useContext } from "react";
 import Botao from "@/components/Botao";
 import { formatadorMoeda } from "@/utils/formatadorMoeda";
-import { CarrinhoContext } from "@/context/CarrinhoContext";
+import { useCarrinhoContext } from "@/hooks/useCarrinhoContext";
 
 const Produto = ({
   src,
@@ -11,7 +10,9 @@ const Produto = ({
   descricao,
   preco,
 }) => {
-  const { adicionarProduto } = useContext(CarrinhoContext);
+
+  const { adicionarProduto } = useCarrinhoContext();
+
   return (
     <div className="col-12 col-md-6 col-xxl-4 pb-4">
       <div className="card">
